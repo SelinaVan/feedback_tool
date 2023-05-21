@@ -878,6 +878,7 @@ document.addEventListener('DOMContentLoaded', function () {
   word-wrap: break-word;
   overflow: hidden;
   padding: 0 20px;
+  margin: 10px 0;
 }
 #feedback_form_btn_submit_container{
     margin: 10px auto;
