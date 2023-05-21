@@ -393,6 +393,7 @@ document.addEventListener('DOMContentLoaded', function () {
   // submit functiton
   function submitFormFeedback() {
     const formSubmit = $('#feedback__form_content').serializeArray();
+  
     // convert data from api to submit object
     const values = convertDataFormToUniqueArray(feedbackFormSubmitObj)
     let submitData = { 
@@ -409,7 +410,10 @@ document.addEventListener('DOMContentLoaded', function () {
       generateThanksPage(thanksObject)
       $('#feedback__form_content')[0].reset()
       // callApiToSubmitFeedbackForm(submitData)
-
+      setTimeout(() =>{
+        $('#feedback-Tool-Review-Modal').hide()
+        onButtonCloseModalClick()
+      },3000)
     }
   }
 
