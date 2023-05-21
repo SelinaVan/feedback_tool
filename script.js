@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // } 
     // convert upload file
       convertFileUploadToBase64();
-      onButtonScreenshotClick()
+   
       // call function submit form
       $("#feedback-Tool-Review-Btn").click(onButtonFeebackFormToggle)
       $('#feedback__form_modal_close-button').click(onButtonCloseModalClick)
@@ -358,7 +358,10 @@ document.addEventListener('DOMContentLoaded', function () {
                           <div id=feedback-tool-crop-result /> </div>`)
       screenshotContainer.append(screenshot)
       feedbackFormSubmitObj.push(screenshots.option.value)
-
+        $('#feedback-tool-screenShot').click((function(e) {
+          e.preventDefault();
+          onButtonScreenshotClick()
+        }))
     }
     if (files !== undefined) {
       const fileElement = $(`<div class="feedback_screenshot_inner " id='feedback_upload_container'>
@@ -463,13 +466,12 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   };
   function onButtonScreenshotClick() {
-    $('#feedback-tool-screenShot').click(function (e) {
-      e.preventDefault();
+
       console.log('click');
       $('#feedback-Tool-Review-Modal').hide();
       $('#feedback-Tool-Review-Btn').hide();
       screenShotPartOfScreen();
-    });
+  
    
   }
   // function screen a part of screen
