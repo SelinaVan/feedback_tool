@@ -75,17 +75,17 @@ document.addEventListener('DOMContentLoaded', function () {
     //   getFormData(feedback_form_link);
     // } 
     // convert upload file
-      convertFileUploadToBase64();
-   
-      // call function submit form
-      $("#feedback-Tool-Review-Btn").click(onButtonFeebackFormToggle)
-      $('#feedback__form_modal_close-button').click(onButtonCloseModalClick)
-      // $("#feedback-tool-screenShot").on('click', onButtonScreenshotClick)
-      $("#btn-submit").on("click", function(e) {
-        e.preventDefault()
-        submitFormFeedback()
-      })
-  
+    convertFileUploadToBase64();
+
+    // call function submit form
+    $("#feedback-Tool-Review-Btn").click(onButtonFeebackFormToggle)
+    $('#feedback__form_modal_close-button').click(onButtonCloseModalClick)
+    // $("#feedback-tool-screenShot").on('click', onButtonScreenshotClick)
+    $("#btn-submit").on("click", function (e) {
+      e.preventDefault()
+      submitFormFeedback()
+    })
+
     var scriptSrc = document.getElementById("myscript").src;
     // console.log(scriptSrc.split("?")[1].split("&"));
   };
@@ -140,7 +140,7 @@ document.addEventListener('DOMContentLoaded', function () {
     buttonSubmitContainer.append(buttonFooter)
     formContainer.append(titleHeader, formContent, screenshotContainer, screenshotImgContainer, buttonSubmitContainer); //titleHeader,
     feedbackToolReviewModal.append(modalContent);
-    modalContent.append(closeButton, logoContainer, formContainer, welcomPage, thanksPage );
+    modalContent.append(closeButton, logoContainer, formContainer, welcomPage, thanksPage);
     //welcomPage, thanksPage
     generateWelcomPage(formData)
     welcomPage.show()
@@ -149,7 +149,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // welcome page
     // if call here, screenshot work
     // generateFormbase(formData[0].data)
-  
+
   }
 
   // generate 1st page
@@ -177,8 +177,8 @@ document.addEventListener('DOMContentLoaded', function () {
       onButtonFormNameClick(name);
     });
   }
-// when click formname will change to form page
-   function onButtonFormNameClick(paramFormName) {
+  // when click formname will change to form page
+  function onButtonFormNameClick(paramFormName) {
     let formContainer = $('#feedback__form_content')
 
     if (bugArray.includes(paramFormName)) {
@@ -193,21 +193,20 @@ document.addEventListener('DOMContentLoaded', function () {
     if (surveyArray.includes(paramFormName)) {
       formDataGenerate = mockupData.formData.find(item => surveyArray.includes(item.formName))
     }
-     // title => render content from api
+    // title => render content from api
     $('.feedback_title').text(`${formDataGenerate?.title}`)
-     generateFormbase(formDataGenerate?.data);
+    generateFormbase(formDataGenerate?.data);
     $('#feedback_welcome_page').hide()
-   
+
     formContainer.show()
   }
   // generate form base
   const generateFormbase = (data) => {
-    console.log('data: ', data);
     let formContent = $('#feedback_form_content')
     let screenshotContainer = $('#feedback_screenshot_container');
     formContent.html('')
     screenshotContainer.html('')
-   
+
     const files = data?.find((item) => item.type === 'file');
     const screenshots = data?.find((item) => item.type === 'screenshot');
     let otherInputType = data?.filter((item) => !typesExclude.includes(item.type)).sort((a, b) => {
@@ -349,19 +348,19 @@ document.addEventListener('DOMContentLoaded', function () {
 
       }
     }
-      if (!files && !screenshots) {
+    if (!files && !screenshots) {
       screenshotContainer.html('')
     }
-      if (screenshots !== undefined) {
+    if (screenshots !== undefined) {
       const screenshot = $(`<div class="feedback_screenshot_inner">
                           <button id='feedback-tool-screenShot' class='feedback__form-btn-capture'> <i class="fa-solid fa-camera" style='font-size: 1.5rem'></i> </button>
                           <div id=feedback-tool-crop-result /> </div>`)
       screenshotContainer.append(screenshot)
       feedbackFormSubmitObj.push(screenshots.option.value)
-        $('#feedback-tool-screenShot').click((function(e) {
-          e.preventDefault();
-          onButtonScreenshotClick()
-        }))
+      $('#feedback-tool-screenShot').click((function (e) {
+        e.preventDefault();
+        onButtonScreenshotClick()
+      }))
     }
     if (files !== undefined) {
       const fileElement = $(`<div class="feedback_screenshot_inner " id='feedback_upload_container'>
@@ -396,27 +395,32 @@ document.addEventListener('DOMContentLoaded', function () {
   // submit functiton
   function submitFormFeedback() {
     const formSubmit = $('#feedback__form_content').serializeArray();
-  
+
     // convert data from api to submit object
     const values = convertDataFormToUniqueArray(feedbackFormSubmitObj)
-    let submitData = { 
+    let submitData = {
       formName: formNameSubmit,
       ...values
     }
     // get data from form and assign to object
     readDataFromSubmitForm(submitData, formSubmit)
-    const isValid = validateField(mockupData.formData[0].data, submitData)
-    
+    const isValid = validateField(formDataGenerate?.data, submitData)
+
     // validate Post data
     if (isValid) {
       console.log('submitData: ', submitData);
       generateThanksPage(thanksObject)
+      // clear form
       $('#feedback__form_content')[0].reset()
+      // clear screen shot
+      feedbackToolScreeBase64Data = []
+      // clear upload
+      feedbackToolUploadFile = {}
       // callApiToSubmitFeedbackForm(submitData)
-      setTimeout(() =>{
+      setTimeout(() => {
         $('#feedback-Tool-Review-Modal').hide()
         onButtonCloseModalClick()
-      },3000)
+      }, 3000)
     }
   }
 
@@ -431,6 +435,7 @@ document.addEventListener('DOMContentLoaded', function () {
     welcomePage.show();
     $('.feedback_title').text('')
     $('.form_thanks_preview').html('')
+    $('#feedback_screenshot_img_container').html('')
   }
   // TOGGLE MODAL FEEDBACK WHEN CLICK BUTTON => WORK
   function onButtonFeebackFormToggle() {
@@ -445,12 +450,11 @@ document.addEventListener('DOMContentLoaded', function () {
   function getFormDataFromLocalStorage({ name }) {
     return JSON.parse(localStorage.getItem(`${name}`)) || null
   }
- 
+
   //convert image to file base 64
   const convertFileUploadToBase64 = () => {
     $(document).on("input", "input:file", function (e) {
       const file = e.target.files[0];
-      console.log('file: ', file);
       let feedbackFileName = $('#feedback_input_file_name')
       feedbackFileName.text('')
       if (file.name !== '') {
@@ -465,14 +469,11 @@ document.addEventListener('DOMContentLoaded', function () {
       reader.readAsDataURL(file);
     });
   };
+  // function when click button screen shot
   function onButtonScreenshotClick() {
-
-      console.log('click');
-      $('#feedback-Tool-Review-Modal').hide();
-      $('#feedback-Tool-Review-Btn').hide();
-      screenShotPartOfScreen();
-  
-   
+    $('#feedback-Tool-Review-Modal').hide();
+    $('#feedback-Tool-Review-Btn').hide();
+    screenShotPartOfScreen();
   }
   // function screen a part of screen
   async function screenShotPartOfScreen() {
@@ -480,23 +481,23 @@ document.addEventListener('DOMContentLoaded', function () {
       let uploadedImage = $('#feedback-tool-uploaded-image');
       let screenshotContainer = $('#feedback_screenshot_container');
       screenshotContainer.find('#feedback-tool-img-crop-result').remove()
-      $("#feedback-Tool-Review-Modal").hide() // hide modal at this position not throw error but canvas already draw modal
+      $("#feedback-Tool-Review-Modal").hide()
 
-      // Calculate the height of the canvas to include the border
       const canvas = await html2canvas(document.body, {
         allowTaint: true,
         useCORS: true,
-        scrollX: 0,
-        scrollY: 0,
+        scale: 4
       });
-
-      $('body').css('border', '2px solid red');
-
-      $(uploadedImage).css('display', 'block')
-      canvas.toBlob((blob) => {
-        let file = new File([blob], "myImage.png", { type: "image/png" });
-        getImageFromScreenShot(file, uploadedImage);
-      }, "image/png");
+      // clear upload image to avoid it keep the old one
+      uploadedImage.html('')
+      // hide al body accept cropper-container and feedback-tool-upload-image
+      $('body > *:not(.cropper-container)').hide();
+      $(`body > *:not(#feedback-tool-uploaded-image)`).hide();
+      $('body').css('border', '2px solid red')
+      $('.cropper-container').show()
+      uploadedImage.show()
+      uploadedImage.append(canvas)
+      processImageAfterCrop(canvas);
 
       //create base64
       // $(uploadedImage).css('display', 'block');
@@ -510,19 +511,12 @@ document.addEventListener('DOMContentLoaded', function () {
       console.log('error', error)
     }
   }
-  // function get image from screenshot
-  function getImageFromScreenShot(file, uploadedImageDiv) {
-    const img = $('<img/>').attr('id', 'myGreatImage').attr('src', URL.createObjectURL(file)).css('width', '100%');
 
-    uploadedImageDiv.append(img);
-    processImageAfterCrop(uploadedImageDiv);
-  }
   // function process image after scrop
-  function processImageAfterCrop(uploadedImageDiv) {
-    let myGreatImage = document.getElementById("myGreatImage");
+  function processImageAfterCrop(canvas) {
     let cropper = null;
 
-    cropper = new Cropper(myGreatImage, {
+    cropper = new Cropper(canvas, {
       viewMode: 4,
       movable: false,
       rotatable: false,
@@ -531,14 +525,13 @@ document.addEventListener('DOMContentLoaded', function () {
         this.cropper.clear();
       },
       cropend(mouseup) {
-        cropImage(uploadedImageDiv, cropper);
+        cropImage(cropper);
       },
     });
   }
   // function crop image
-  function cropImage(uploadedImageDiv, cropper) {
+  function cropImage(cropper) {
     imageId++
-    let screenshotContainer = $('#feedback_screenshot_container');
     let screenshotImgContainer = $('#feedback_screenshot_img_container');
     let imageWrapper = $('<div style="display: flex; justify-content: space-between; align-items: center;height: 40px"/>')
     let deleteButton = $('<span style="cursor: pointer"><i class="fa-solid fa-xmark"></i></span>')
@@ -547,22 +540,27 @@ document.addEventListener('DOMContentLoaded', function () {
     let modal = $("#feedback-Tool-Review-Modal");
     let feedbackToolReviewBtn = $("#feedback-Tool-Review-Btn");
 
-    // create base64
+    // create base64 => too heavy for server so change to binary
     // const imgurl = cropper.getCroppedCanvas().toDataURL();
     // console.log('imgurl: ', imgurl);
     // const img = $('<img id="feedback-tool-img-crop-result"/>').attr('src', imgurl).css({ 'width': '170px', 'height': '96px', 'border': 'solid', 'margin': '2px' });
     // screenshotContainer.append(img);
     cropper.getCroppedCanvas().toBlob((blob) => {
       let file = new File([blob], `myImage${imageId}.png`, { type: "image/png" });
+      // preview img 
       file.preview = URL.createObjectURL(blob);
       pText.text(file.name)
       deleteButton.attr('data-file-name', file.name);
       screenshotImgContainer.append(imageWrapper)
-
-      $(uploadedImageDiv).hide();
+      // show all except cropper and uploaded image
+      $('body').css('border', 'none')
+      $('body > *:not(.cropper-container)').show();
+      $(`body > *:not(#feedback-tool-uploaded-image)`).show();
+      $('.cropper-container').hide()
+      $('#feedback-tool-uploaded-image').hide();
       $(feedbackToolReviewBtn).show();
       $(modal).show();
-      $('body').css('border', 'none');
+
       feedbackToolScreeBase64Data.push(file);
       // when click delete button will delete this image
       deleteButton.click(function () {
@@ -574,7 +572,6 @@ document.addEventListener('DOMContentLoaded', function () {
       });
       // click name will open image
       pText.click(function () {
-        const fileName = $(this).text();
         const previewImage = $('<img class="preview-image"/>').attr('src', file.preview);
 
         // Remove any previously appended preview images
@@ -603,7 +600,7 @@ document.addEventListener('DOMContentLoaded', function () {
     paramObj.attachment = feedbackToolUploadFile;
     paramObj.screenshot = feedbackToolScreeBase64Data;
     // get value of checkbox dynamic, 
-    $("input[type='checkbox']:checked").each(function () {
+    $("#feedback__form_content").find("input[type='checkbox']:checked").each(function () {
       const fieldName = $(this).attr('name');
       const value = $(this).val()
 
@@ -622,21 +619,21 @@ document.addEventListener('DOMContentLoaded', function () {
     let emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/
     // filter require field
     let requiredField = data.filter(item => item.required === true).map(item => item.option.questionText.toLowerCase())
-      for (let i = 0; i < requiredField.length; i++) { 
-        const prop = requiredField[i]
-        $(`#feedback_error_${prop}`).text('')
-        if (paramObj.hasOwnProperty(prop) && paramObj[prop] === '') {
-          $(`#feedback_error_${prop}`).text(`Please enter...`).css({ 'color': 'red', 'font-size': '12px' })
-          $(`input[name="${prop}"]`).focus()
-          $(`select[name="${prop}"]`).focus()
-          $(`textarea[name="${prop}"]`).focus()
-          return false;
-        }
-        if (prop === 'email' && !emailRegex.test(paramObj[prop])) {
-          $(`#feedback_error_email`).text('Invalid email').css({ 'color': 'red', 'font-size': '12px' })
-          return false;
-        }
+    for (let i = 0; i < requiredField.length; i++) {
+      const prop = requiredField[i]
+      $(`#feedback_error_${prop}`).text('')
+      if (paramObj.hasOwnProperty(prop) && paramObj[prop] === '') {
+        $(`#feedback_error_${prop}`).text(`Please enter...`).css({ 'color': 'red', 'font-size': '12px' })
+        $(`input[name="${prop}"]`).focus()
+        $(`select[name="${prop}"]`).focus()
+        $(`textarea[name="${prop}"]`).focus()
+        return false;
       }
+      if (prop === 'email' && !emailRegex.test(paramObj[prop])) {
+        $(`#feedback_error_email`).text('Invalid email').css({ 'color': 'red', 'font-size': '12px' })
+        return false;
+      }
+    }
     return true;
   }
 
@@ -1003,6 +1000,7 @@ document.addEventListener('DOMContentLoaded', function () {
    font-size:2rem;
 
 }
+
 `;
   style.innerHTML = keyframes;
 })
@@ -1099,56 +1097,56 @@ document.addEventListener('DOMContentLoaded', function () {
 //   border: none;
 // }
 // this work, to create button next and back
- // let forthAndBackBtnContainer = $('#forth_and_back_btn_container')
-    // startValue = initialLoop * limitValue;
-    // endValue = startValue + limitValue
-    // // slide array to take limit value
-    // let otherInputArray = otherInputType.slice(startValue, endValue);
+// let forthAndBackBtnContainer = $('#forth_and_back_btn_container')
+// startValue = initialLoop * limitValue;
+// endValue = startValue + limitValue
+// // slide array to take limit value
+// let otherInputArray = otherInputType.slice(startValue, endValue);
 
-    // forthAndBackBtnContainer.html('');
+// forthAndBackBtnContainer.html('');
 
-    // const buttonNextPrev = $(`<button id='feedback_btn_back'><i class="fa-solid fa-arrow-left"></i></i></button>
-    //   <button id='feedback_btn_next'><i class="fa-solid fa-arrow-right"></i></button>`)
-    
-      // just render button back and next if array length > limit value
-    // if (otherInputType.length > limitValue) {
-    //   forthAndBackBtnContainer.append(buttonNextPrev)
-    //   $('#feedback_btn_back').on('click', (e) => {
-    //     e.preventDefault()
-    //     onBtnGoToPrevQuestionClick(data)
-    //   });
-    //   $('#feedback_btn_next').on('click', (e) => {
-    //     e.preventDefault()
-    //     onBtnGoToNextQuestion(data)
-    //   });
-    // }
-    // every time click, need to set inner of screenshot container to empty
-    // screenshotContainer.html('')
+// const buttonNextPrev = $(`<button id='feedback_btn_back'><i class="fa-solid fa-arrow-left"></i></i></button>
+//   <button id='feedback_btn_next'><i class="fa-solid fa-arrow-right"></i></button>`)
+
+// just render button back and next if array length > limit value
+// if (otherInputType.length > limitValue) {
+//   forthAndBackBtnContainer.append(buttonNextPrev)
+//   $('#feedback_btn_back').on('click', (e) => {
+//     e.preventDefault()
+//     onBtnGoToPrevQuestionClick(data)
+//   });
+//   $('#feedback_btn_next').on('click', (e) => {
+//     e.preventDefault()
+//     onBtnGoToNextQuestion(data)
+//   });
+// }
+// every time click, need to set inner of screenshot container to empty
+// screenshotContainer.html('')
 
 
-      // function next question => work
-  // function onBtnGoToNextQuestion(questionData) {
-  //   $('#feedback_form_content').html('');
-  //   if (initialLoop < Math.floor(questionData.length / limitValue) - 1) {
-  //     ++initialLoop; // Increment the initialLoop variable
-    
-  //   } else {
-  //     initialLoop = (Math.floor(questionData.length / limitValue) - 1);
-  //   }
+// function next question => work
+// function onBtnGoToNextQuestion(questionData) {
+//   $('#feedback_form_content').html('');
+//   if (initialLoop < Math.floor(questionData.length / limitValue) - 1) {
+//     ++initialLoop; // Increment the initialLoop variable
 
-  //   generateFormbase(questionData);
-  // }
-  // // function prev question => work
-  // function onBtnGoToPrevQuestionClick(questionData) {
-  //   $('#feedback_form_content').html('');
+//   } else {
+//     initialLoop = (Math.floor(questionData.length / limitValue) - 1);
+//   }
 
-  //   if (initialLoop > 0) {
-  //     initialLoop--; // Decrement the initialLoop variable
-  //   } else {
-  //     initialLoop = 0;
-  //   }
-  //   generateFormbase(questionData);
-  // }
+//   generateFormbase(questionData);
+// }
+// // function prev question => work
+// function onBtnGoToPrevQuestionClick(questionData) {
+//   $('#feedback_form_content').html('');
+
+//   if (initialLoop > 0) {
+//     initialLoop--; // Decrement the initialLoop variable
+//   } else {
+//     initialLoop = 0;
+//   }
+//   generateFormbase(questionData);
+// }
 
 const mockupData = {
   "widget": {
